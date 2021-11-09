@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const dotenv = require('dotenv')
 const mail = require('./email')
+const tokenService = require('../services/token.service')
+const userService = require('../services/user.service')
 dotenv.config()
 
 
@@ -27,17 +29,34 @@ const register = async (req,res) => {
 }
 
 const login = async (req,res) => {
-    const user = await User.findOne({email: req.body.email})
-    if (!user) return res.status(400).send('Invalid email or password')
+    const user = await User.findOne({name: req.body.name})
+    if (!user) return res.status(400).send('Invalid username or password')
 
     const validPass = await bcrypt.compare(req.body.password,user.password)
-    if(!validPass) return res.status(400).send('Invalid email or password')
+    if(!validPass) return res.status(400).send('Invalid username or password')
 
-    const token = jwt.sign({_id: user._id}, process.env.SECRET,{expiresIn : '1h'})
-    res.header('jwt',token).send('Login successful, Email sent')
-    
-
+    const token = await tokenService.generateAuthTokens(user)
+    res.send({user,token})
     if(login) return (mail.login_email())
+}
+
+const refreshAuth = async (refreshToken) => {
+    try {
+      const refreshTokenDoc = await tokenService.verifyToken(refreshToken, 'refresh');
+      const user = await userService.getUserById(refreshTokenDoc.user);
+      if (!user) {
+        throw new Error();
+      }
+      await refreshTokenDoc.remove();
+      return tokenService.generateAuthTokens(user);
+    } catch (error) {
+      res.send(error)   
+     }
+  }
+
+const refreshTokens = async (req, res) => {
+    const tokens = await refreshAuth(req.body.refreshToken)
+    res.send({ ...tokens })
 }
 
 module.exports = {register,login}

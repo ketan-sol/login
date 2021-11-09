@@ -13,5 +13,4 @@ mongoose.connect(process.env.CONNECT, () => {
 app.use(express.json())
 app.use('/api/user', router)
 
-
 app.listen(3000, () => console.log('connected to server and running'))

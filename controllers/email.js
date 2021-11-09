@@ -1,7 +1,7 @@
 const sgMail = require('@sendgrid/mail')
 const dotenv = require('dotenv')
 dotenv.config()
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.setApiKey("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")
 
 const login_email =  () => {
     const msg = {
