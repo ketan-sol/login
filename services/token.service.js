@@ -7,9 +7,9 @@ const Token  = require('../models/token')
 const generateToken = (userId, secret) => {
   const payload = {
     user: userId,
-    secret: process.env.SECRET
+    secret: process.env.SECRET  
   }
-  return jwt.sign(payload,secret);
+  return jwt.sign(payload,process.env.SECRET);
 };
 
 
@@ -25,7 +25,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
 };
 
 const verifyToken = async (token, type) => {
-  const payload = jwt.verify(token, 'fewdeqcressertyt');
+  const payload = jwt.verify(token, process.env.SECRET);
   const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');

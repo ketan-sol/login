@@ -8,27 +8,30 @@ const transfer = async (user,amount) => {
   const transactionId = crypto.randomBytes(2).toString('hex');
 
   try {
-    const balance  = await userService.getCurrentAmountById(user.id)
+    const x  = await userService.getUserById("sender's id")
+    const balance = x.balance
+    console.log(balance)
+    console.log(amount)
+  
     if (balance < amount) {
       console.log('Insufficient funds')
     }
 
     // Update my balance
     const newBalance = balance - amount;
-    await User.findByIdAndUpdate( user.id, { balance: newBalance },
+    await User.findByIdAndUpdate( "sender's id" , { balance: newBalance },
       {
         useFindAndModify: false,
         new: true,
       })
 
-        // // Update third-party balance
-        // const emailExists = await userService.getUserByEmail(email);
-        // if (!emailExists) {
-        //   console.log("Depositor doesn't exist")
-        // }
-        // const details = await userService.getCurrentAmountByEmail(email);
-        // const newBalanceForOtherUser = parseInt(details.balance) + parseInt(money);
-        // await User.findOneAndUpdate({ email }, { balance: newBalanceForOtherUser });
+        // Update third-party balance
+        const receiverBalance = balance + amount
+        await User.findByIdAndUpdate( "receivers's id" , { balance: receiverBalance },
+          {
+            useFindAndModify: false,
+            new: true,
+          })
 
     const transaction = new Transaction({
       transactionId,
@@ -45,17 +48,6 @@ const transfer = async (user,amount) => {
   }
 }
 
-const getTransactions = async (user) => {
-  try {
-    const foundUser = await userService.getUserById(user.id);
-    if (!foundUser) {
-      console.log('User not found');
-    }
-    const { operation, amount, transactionId } = await Transaction.findById(user.id);
-    return { amount, operation, transactionId }
-  } catch (error) {
-        console.log(error)
-  }
-};
 
-module.exports = { transfer,getTransactions }
+
+module.exports = { transfer }

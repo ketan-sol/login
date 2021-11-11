@@ -12,7 +12,6 @@ const deposit =  async (req, res) => {
 //Wallet Transfer
 
 const transfer = async (req, res) => {
-  console.log(req);
   const transferResponse = await transactionService.transfer(req.body.user, req.body.amount);
   res.status(400).send(transferResponse);
 }
