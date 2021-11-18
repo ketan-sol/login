@@ -27,7 +27,7 @@ const transfer = async (user,amount) => {
 
         // Update third-party balance
         const receiverBalance = balance + amount
-        await User.findByIdAndUpdate( "receivers's id" , { balance: receiverBalance },
+        await User.findByIdAndUpdate( "receiver's id" , { balance: receiverBalance },
           {
             useFindAndModify: false,
             new: true,

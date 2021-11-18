@@ -25,7 +25,7 @@ const register = async (req,res) => {
    }catch(err){
        res.status(400).send(err)
    }
-   if(register) return (mail.signUp_email())
+   //if(register) return (mail.signUp_email())
 }
 
 const login = async (req,res) => {
@@ -37,7 +37,7 @@ const login = async (req,res) => {
 
     const token = await tokenService.generateAuthTokens(user)
     res.send({user,token})
-    if(login) return (mail.login_email())
+    //if(login) return (mail.login_email())
 }
 
 const refreshAuth = async (refreshToken) => {
