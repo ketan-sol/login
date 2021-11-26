@@ -2,16 +2,14 @@ const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
 const Token  = require('../models/token')
-const keys = require('./keys')
-//const privateKey = fs.readFileSync('./private.key','utf-8')
-//const publicKey = fs.readFileSync('./public.key','utf-8')
+const key = require('./keys')
 
 
-const generateToken = (userId, secret) => {
+const generateToken = (userId) => {
   const payload = {
     user: userId, 
   }
-  return jwt.sign(payload,keys.privateKey);
+  return jwt.sign(payload,key.privateKey);
 };
 
 
@@ -28,7 +26,7 @@ const saveToken = async (token, userId, expires, type,algorithm, blacklisted = f
 };
 
 const verifyToken = async (token, type) => {
-  const payload = jwt.verify(token,keys.publicKey);
+  const payload = jwt.verify(token,key.publicKey);
   const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');
